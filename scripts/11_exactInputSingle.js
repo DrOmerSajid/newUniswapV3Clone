@@ -63,11 +63,15 @@ async function main(){
 
 // const balanceOfAdd = await usdcContract.balanceOf(signer2.address)
 // console.log("balanceOfAdd signer2: ",balanceOfAdd.toString())
-    // a = await usdtContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('1000'))
-    // b = await usdcContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('1000'))
+    a = await usdtContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('100'))
+    b = await usdcContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('100'))
+    c = await usdtContract.connect(signer2).transfer(signer3.address, ethers.utils.parseEther('10'))
+    d = await usdtContract.connect(signer3).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
     // console.log( (await usdtContract.allowance(signer2.address, signer3.address)).toString())
 
-    await usdcContract.connect(signer2).approve(signer2.address, '1000000000000000000')
+    // await usdtContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
+    // await usdcContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
+
     // await usdcContract.connect(signer3).transferFrom(signer2.address, signer4.address,ethers.utils.parseEther('10'))
     // console.log("balance signer4: ", (await usdcContract.balanceOf(signer4.address)).toString())
     // await usdtContract.connect(signer4).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
@@ -93,12 +97,12 @@ async function main(){
   
     
 
-    const amountIn = 10;
+    const amountIn = 9;
     params = {
         tokenIn: TETHER_ADDRESS,
         tokenOut: USDC_ADDRESS,
         fee: poolData.fee,
-        recipient: signer4.address,
+        recipient: signer3.address,
         deadline: Math.floor(Date.now() / 1000) + (60 * 10),
         amountIn: amountIn.toString(),
         amountOutMinimum: 0,
@@ -114,7 +118,7 @@ async function main(){
     // console.log("===> swaprouter", swaprouter.functions);
     // console.log("===> swaprouter", await swaprouter.factory());
 
-    const tx = await swaprouter.connect(signer4).exactInputSingle(
+    const tx = await swaprouter.connect(signer3).exactInputSingle(
         params,
         { gasLimit: '30000000' }
     )
