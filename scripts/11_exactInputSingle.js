@@ -67,7 +67,7 @@ async function main(){
     // b = await usdcContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('1000'))
     // console.log( (await usdtContract.allowance(signer2.address, signer3.address)).toString())
 
-    await usdcContract.connect(signer2).approve(signer2.address, '1000000000000000000')
+    await usdtContract.connect(signer2).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
     // await usdcContract.connect(signer3).transferFrom(signer2.address, signer4.address,ethers.utils.parseEther('10'))
     // console.log("balance signer4: ", (await usdcContract.balanceOf(signer4.address)).toString())
     // await usdtContract.connect(signer4).approve(SWAP_ROUTER_ADDRESS, ethers.utils.parseEther('10'))
@@ -93,12 +93,12 @@ async function main(){
   
     
 
-    const amountIn = 10;
+    const amountIn = ethers.utils.parseEther('10')
     params = {
         tokenIn: TETHER_ADDRESS,
         tokenOut: USDC_ADDRESS,
         fee: poolData.fee,
-        recipient: signer4.address,
+        recipient: signer2.address,
         deadline: Math.floor(Date.now() / 1000) + (60 * 10),
         amountIn: amountIn.toString(),
         amountOutMinimum: 0,
@@ -114,17 +114,27 @@ async function main(){
     // console.log("===> swaprouter", swaprouter.functions);
     // console.log("===> swaprouter", await swaprouter.factory());
 
-    const tx = await swaprouter.connect(signer4).exactInputSingle(
+    console.log("usdc balance signerIs.address before: ", (await usdcContract.balanceOf(signer2.address)).toString())
+    const tx = await swaprouter.connect(signer2).exactInputSingle(
         params,
         { gasLimit: '30000000' }
     )
 
     const receipt = await tx.wait()
-
+    console.log("usdc balance signerIs.address: after", (await usdcContract.balanceOf(signer2.address)).toString())
 }
 
 /*
+npx hardhat run --network localhost scripts/01_deployContracts.js
+npx hardhat run --network localhost scripts/02_deployTokens.js
+npx hardhat run --network localhost scripts/03_deployPools.js
+npx hardhat run --network localhost scripts/04_mintPosition.js
+npx hardhat run --network localhost scripts/05_increaseLiquidity.js
+
+
+clear
 npx hardhat run --network localhost scripts/11_exactInputSingle.js
+
 */
 
 
